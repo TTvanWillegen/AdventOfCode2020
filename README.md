@@ -38,8 +38,8 @@ At the top of [pull.py](pull.py) (line 20) you can select your year.
 Now, run [pull.py](pull.py) again, it will make use of your .session to check for every day in selected year and generate respective folders and files.
 As soon as it hits a day that is not yet unlocked, it will automatically wait until it opens to continue with the script. To stop this, simply terminate the script.
 
-In the day's folder, you will find [input.txt]("Day 1/input.txt"), this is the input as provided by AoC. 
-You will also find main.py with some boilerplate functions, automatically opening the input file for you.
+In the day's folder, you will find `input.txt`, this is the input as provided by AoC. 
+You will also find `main.py` with some boilerplate functions, automatically opening the input file for you.
 
 The line `advent_of_code.answer(1, None)` needs to be replaced to automatically upload your answer. 
 To do this, simply replace `None` by your answer. As of now, only integer answers support hints.
