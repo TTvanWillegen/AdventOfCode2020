@@ -15,6 +15,7 @@ class AocInteraction:
         with open(join(self.__location__, '.session'), 'r') as f:
             self.year = 2020
             self.hints = True
+
             self.session = Session()
             self.session.cookies = cookiejar_from_dict({'session': f.readline()})
 
@@ -77,8 +78,19 @@ if __name__ == "__main__":
                                 break
                         f.seek(0)
                         f.write("\n".join(old_split))
+            elif main_response.text.startswith("Please don't repeatedly request this endpoint before it unlocks!"):
+                countdown_page = self.session.get('https://adventofcode.com/' + str(self.year))
+                countdown_f = regex_search("var server_eta = (\d+);", countdown_page.text)
+                if countdown_f and countdown_f.group(1):
+                    countdown_s = countdown_f.group(1)
+                    print(day_name, "This day is not yet unlocked... It will take about", self._s_to_text(countdown_s), "seconds to unlock.")
+                    print("Waiting to unlock automatically... To cancel, terminate script.")
+                    sleep(int(countdown_s))
+                    print("Unlocking...")
+                    self.pull()
+                break
             else:
-                print(day_name, "-", "Error found:", str(main_response.status_code))
+                print(day_name, "-", "Error found:", str(main_response.status_code), main_response.text)
                 break
 
     def answer(self, part, a):
@@ -157,8 +169,22 @@ if __name__ == "__main__":
                         else:
                             print(t)
                     else:
-                        print(prefix, "Error found:", response.status_code, response.reason)
+                        print(prefix, "Error found:", response.status_code, response.text)
         return
+
+    @staticmethod
+    def _s_to_text(s):
+        s = int(s)
+        t = ""
+        if s > 3600:
+            t += str(int(s / 3600)) + "h "
+        s = s % 3600
+        if s > 60:
+            t += str(int(s / 60)) + "m "
+        s = s % 60
+        if s > 0:
+            t += str(s) + "s "
+        return t.strip()
 
 
 if __name__ == "__main__":
