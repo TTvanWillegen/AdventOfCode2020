@@ -1,4 +1,4 @@
-# Welcome to FROSTY ⛄ 
+# Welcome to FROSTY! ⛄ 
 ## Questions and Answers
 ### Why is it called like this?
 That is a really good question. 
