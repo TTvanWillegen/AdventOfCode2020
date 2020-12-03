@@ -18,7 +18,7 @@ class Interact:
             self.session.cookies = cookiejar_from_dict({'session': f.readline()})
 
     def pull(self):
-        for day in range(1, 2):
+        for day in range(1, 26):
             main_response = self.session.get('https://adventofcode.com/' + str(self.year) + '/day/' + str(day))
             day_name = "Day " + str(day)
             if main_response.status_code == 200:
@@ -137,6 +137,7 @@ if __name__ == "__main__":
                             previous_answers.seek(0)
                             previous_answers.write("\n".join([x for x in old_split if x]))
                         elif t.startswith("That's the right answer!"):
+                            print(t)
                             old_split.append(str(a))
                             old_split.append("<<<CORRECT>>>")
                             previous_answers.seek(0)
