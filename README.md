@@ -46,6 +46,9 @@ To do this, simply replace `None` by your answer. As of now, only integer answer
 The `1` simply denotes that this is the answer for part 1, as can be seen in the second function, having a `2`.
 If you keep the answer set as `None`, no call is made to the server and thus it does not incur any time penalties for being wrong.
 
+### I have a question?
+Feel free to create an issue or contact me in other ways.
+
 ### I have found an error, what can I do now?
 While the elves did their best to code this bug-free, no pythons live on the North Pole. As of such, it is unlikely they know completely what they are doing.
 If you find any errors or improvements, please don't hesitate to create a PR or issue.
