@@ -14,6 +14,7 @@ class Interact:
         self.__location__ = realpath(join(getcwd(), dirname(__file__)))
         with open(join(self.__location__, '.session'), 'r') as f:
             self.year = 2020
+            self.hints = True
             self.session = Session()
             self.session.cookies = cookiejar_from_dict({'session': f.readline()})
 
@@ -108,12 +109,16 @@ if __name__ == "__main__":
                 temp.reverse()
                 found = False
                 for line in temp:
-                    if line == str(a):
-                        print(prefix, "You answered", a, "---", "You have already provided that answer.")
+                    split_line = [x for x in line.split('    ', 1) if x]
+                    if len(split_line) == 2 and split_line[1].endswith("<<<CORRECT>>>"):
+                        print(prefix, "You have already correctly answered this question. The answer was", split_line[0] + ".")
                         found = True
                         break
-                    elif line == "<<<CORRECT>>>":
-                        print(prefix, "You have already correctly answered this question.")
+                    elif split_line[0] == str(a):
+                        if len(split_line) == 2 and self.hints:
+                            print(prefix, "You answered", a, "---", "You have already provided that answer. That answer was", regex_search("<<<([\w\s]+)>>>", split_line[1]).group(1) + ".")
+                        else:
+                            print(prefix, "You answered", a, "---", "You have already provided that answer.")
                         found = True
                         break
                 if not found:
@@ -131,9 +136,14 @@ if __name__ == "__main__":
                                 print("Too fast! Waiting for", s, "seconds before automatic retry!")
                                 sleep(s)
                                 self.answer(part, a)
-                        elif t.startswith("That's not the right answer."):
+                        elif t.startswith("That's not the right answer"):
                             print(t)
-                            old_split.append(str(a))
+                            if t.startswith("That's not the right answer; your answer is too high."):
+                                old_split.append(str(a) + "    <<<too high>>>")
+                            elif t.startswith("That's not the right answer; your answer is too low."):
+                                old_split.append(str(a) + "    <<<too low>>>")
+                            else:
+                                old_split.append(str(a))
                             previous_answers.seek(0)
                             previous_answers.write("\n".join([x for x in old_split if x]))
                         elif t.startswith("That's the right answer!"):
