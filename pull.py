@@ -27,7 +27,7 @@ class AocInteraction:
                 exit(1)
 
     def pull(self):
-        for day in range(1, 5):
+        for day in range(1, 26):
             main_response = self.session.get('https://adventofcode.com/' + str(self.year) + '/day/' + str(day))
             day_name = "Day " + str(day)
             if main_response.status_code == 200:
