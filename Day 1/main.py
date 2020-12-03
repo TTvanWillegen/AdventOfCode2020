@@ -1,4 +1,4 @@
-from pull import Interact
+from pull import AocInteraction
 
 
 #  https://adventofcode.com/2020/day/1
@@ -27,8 +27,6 @@ def part_1(advent_of_code):
                     advent_of_code.answer(1, int(lines[i]) * int(lines[j]))
 
 
-
-
 #  --- Part Two ---
 #  The Elves in accounting are thankful for your help; one of them even offers you a starfish coin they had left over from a past vacation. They offer you a second one if you can find three numbers in your expense report that meet the same criteria.
 #  Using the above example again, the three entries that sum to 2020 are 979, 366, and 675. Multiplying them together produces the answer, 241861950.
@@ -45,6 +43,6 @@ def part_2(advent_of_code):
 
 
 if __name__ == "__main__":
-    advent_of_code = Interact()
-    part_1(advent_of_code)
-    part_2(advent_of_code)
+    aoc_interaction = AocInteraction()
+    part_1(aoc_interaction)
+    part_2(aoc_interaction)

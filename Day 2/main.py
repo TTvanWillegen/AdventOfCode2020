@@ -1,4 +1,4 @@
-from pull import Interact
+from pull import AocInteraction
 from re import search as regex_search, findall as regex_findall
 
 
@@ -49,6 +49,6 @@ def part_2(advent_of_code):
 
 
 if __name__ == "__main__":
-    advent_of_code = Interact()
-    part_1(advent_of_code)
-    part_2(advent_of_code)
+    aoc_interaction = AocInteraction()
+    part_1(aoc_interaction)
+    part_2(aoc_interaction)

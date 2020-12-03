@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from re import search as regex_search
 
 
-class Interact:
+class AocInteraction:
     def __init__(self):
         self.__location__ = realpath(join(getcwd(), dirname(__file__)))
         with open(join(self.__location__, '.session'), 'r') as f:
@@ -58,9 +58,9 @@ def part_2(advent_of_code):
         advent_of_code.answer(2, None)
 \n
 if __name__ == "__main__":
-    advent_of_code = Interact()
-    part_1(advent_of_code)
-    part_2(advent_of_code)
+    aoc_interaction = AocInteraction()
+    part_1(aoc_interaction)
+    part_2(aoc_interaction)
 """)
                     if len(parts) == 2:
                         f.seek(0)
@@ -148,8 +148,7 @@ if __name__ == "__main__":
                             previous_answers.write("\n".join([x for x in old_split if x]))
                         elif t.startswith("That's the right answer!"):
                             print(t)
-                            old_split.append(str(a))
-                            old_split.append("<<<CORRECT>>>")
+                            old_split.append(str(a) + "    <<<CORRECT>>>")
                             previous_answers.seek(0)
                             previous_answers.write("\n".join([x for x in old_split if x]))
                             self.pull()
@@ -163,5 +162,5 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    interact = Interact()
+    interact = AocInteraction()
     interact.pull()
