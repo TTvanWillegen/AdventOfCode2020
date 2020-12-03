@@ -12,15 +12,22 @@ from re import search as regex_search
 class AocInteraction:
     def __init__(self):
         self.__location__ = realpath(join(getcwd(), dirname(__file__)))
+        if not exists(join(self.__location__, '.session')):
+            open(join(self.__location__, '.session'), 'w').close()
         with open(join(self.__location__, '.session'), 'r') as f:
-            self.year = 2020
-            self.hints = True
+            session_token = f.readline()
+            if session_token:
+                self.year = 2015
+                self.hints = True
 
-            self.session = Session()
-            self.session.cookies = cookiejar_from_dict({'session': f.readline()})
+                self.session = Session()
+                self.session.cookies = cookiejar_from_dict({'session': session_token})
+            else:
+                print("Insert your session token in `.session` You can find the token in a cookie on adventofcode.com; it is valid for a month after logging in.")
+                exit(1)
 
     def pull(self):
-        for day in range(1, 26):
+        for day in range(1, 5):
             main_response = self.session.get('https://adventofcode.com/' + str(self.year) + '/day/' + str(day))
             day_name = "Day " + str(day)
             if main_response.status_code == 200:
@@ -44,7 +51,7 @@ class AocInteraction:
                     parts = soup.findAll("article")
                     if old == "":
                         print(day_name, "-", "Main.py")
-                        f.write("from pull import Interact\n\n\n#  https://adventofcode.com/" + str(self.year) + "/day/" + str(day) + "\n")
+                        f.write("from pull import AocInteraction\n\n\n#  https://adventofcode.com/" + str(self.year) + "/day/" + str(day) + "\n")
                         lines = [i for i in parts[0].get_text().replace(" ---", " ---\n").split("\n") if i]
                         f.write(str('\n'.join(map(lambda x: "#  " + x, lines))))
                         f.write("""
@@ -120,13 +127,33 @@ if __name__ == "__main__":
                 temp = old_split
                 temp.reverse()
                 found = False
+
+                if self.hints:
+                    low_border = None
+                    high_border = None
+
+                    # low_border = max([int(line.split("    ")[0]) for line in temp if len(line.split("    ")) == 2 and line.split("    ")[1].endswith("<<<too low>>>")])
+                    # high_border = min([int(line.split("    ")[0]) for line in temp if len(line.split("    ")) == 2 and line.split("    ")[1].endswith("<<<too high>>>")])
+                    for line in temp:
+                        split_line = [x for x in line.split('    ', 1) if x]
+                        if len(split_line) == 2 and split_line[1].endswith("<<<too low>>>") and (low_border is None or int(split_line[0]) > low_border):
+                            low_border = int(split_line[0])
+                        elif len(split_line) == 2 and split_line[1].endswith("<<<too high>>>") and (high_border is None or int(split_line[0]) < high_border):
+                            high_border = int(split_line[0])
+                    if low_border is not None and low_border > int(a):
+                        print(prefix, "Your answer is likely to be wrong; you have provided", a, "while you have previously provided", str(low_border) + ", which was too low.")
+                        return
+                    elif high_border is not None and high_border < int(a):
+                        print(prefix, "Your answer is likely to be wrong; you have provided", a, "while you have previously provided", str(high_border) + ", which was too high.")
+                        return
+
                 for line in temp:
                     split_line = [x for x in line.split('    ', 1) if x]
                     if len(split_line) == 2 and split_line[1].endswith("<<<CORRECT>>>"):
                         print(prefix, "You have already correctly answered this question. The answer was", split_line[0] + ".")
                         found = True
                         break
-                    elif split_line[0] == str(a):
+                    elif len(split_line) == 1 and split_line[0] == str(a):
                         if len(split_line) == 2 and self.hints:
                             print(prefix, "You answered", a, "---", "You have already provided that answer. That answer was", regex_search("<<<([\w\s]+)>>>", split_line[1]).group(1) + ".")
                         else:
@@ -145,11 +172,11 @@ if __name__ == "__main__":
                                 s = int(seconds_find.group(3)) + 1
                                 if seconds_find.group(2):
                                     s += 60 * int(seconds_find.group(2))
-                                print("Too fast! Waiting for", s, "seconds before automatic retry!")
+                                print(prefix, "Too fast! Waiting for", s, "seconds before automatic retry!")
                                 sleep(s)
                                 self.answer(part, a)
                         elif t.startswith("That's not the right answer"):
-                            print(t)
+                            print(prefix, t)
                             if t.startswith("That's not the right answer; your answer is too high."):
                                 old_split.append(str(a) + "    <<<too high>>>")
                             elif t.startswith("That's not the right answer; your answer is too low."):
@@ -159,15 +186,19 @@ if __name__ == "__main__":
                             previous_answers.seek(0)
                             previous_answers.write("\n".join([x for x in old_split if x]))
                         elif t.startswith("That's the right answer!"):
-                            print(t)
+                            print(prefix, t)
                             old_split.append(str(a) + "    <<<CORRECT>>>")
                             previous_answers.seek(0)
                             previous_answers.write("\n".join([x for x in old_split if x]))
                             self.pull()
                         elif t.startswith("You don't seem to be solving the right level."):
-                            print(t)
+                            print(prefix, t)
+                        elif t.startswith("--- Day"):
+                            print(prefix, "There is likely something wrong with your session token, maybe it is outdated. Please fix it in `.session` before continuing.")
                         else:
                             print(t)
+                    elif response.status_code == 302:
+                        print(prefix, "Fill in your session token in `.session`.")
                     else:
                         print(prefix, "Error found:", response.status_code, response.text)
         return
