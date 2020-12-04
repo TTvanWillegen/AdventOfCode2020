@@ -150,7 +150,7 @@ if __name__ == "__main__":
                 for line in temp:
                     split_line = [x for x in line.split('    ', 1) if x]
                     if len(split_line) == 2 and split_line[1].endswith("<<<CORRECT>>>"):
-                        print(prefix, "You have already correctly answered this question. The answer was", split_line[0] + ".")
+                        print(prefix, "You have already correctly answered this question. The answer was", split_line[0] + ". Your current answer is " + str(a))
                         found = True
                         break
                     elif len(split_line) == 1 and split_line[0] == str(a):
