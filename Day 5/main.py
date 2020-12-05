@@ -52,7 +52,7 @@ def part_2(advent_of_code):
         for l in seats:
             if i != l:
                 advent_of_code.answer(2, i)
-                break;
+                break
             i += 1
 
 
