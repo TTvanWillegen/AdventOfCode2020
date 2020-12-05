@@ -26,7 +26,7 @@ class AocInteraction:
                 print("Insert your session token in `.session` You can find the token in a cookie on adventofcode.com; it is valid for a month after logging in.")
                 exit(1)
 
-    def pull(self):
+    def pull(self, wait=True):
         for day in range(1, 26):
             main_response = self.session.get('https://adventofcode.com/' + str(self.year) + '/day/' + str(day))
             day_name = "Day " + str(day)
@@ -88,7 +88,7 @@ if __name__ == "__main__":
             elif main_response.text.startswith("Please don't repeatedly request this endpoint before it unlocks!"):
                 countdown_page = self.session.get('https://adventofcode.com/' + str(self.year))
                 countdown_f = regex_search("var server_eta = (\d+);", countdown_page.text)
-                if countdown_f and countdown_f.group(1):
+                if wait and countdown_f and countdown_f.group(1):
                     countdown_s = countdown_f.group(1)
                     print(day_name, "This day is not yet unlocked... It will take about", self._s_to_text(countdown_s), "seconds to unlock.")
                     print("Waiting to unlock automatically... To cancel, terminate script.")
@@ -190,7 +190,7 @@ if __name__ == "__main__":
                             old_split.append(str(a) + "    <<<CORRECT>>>")
                             previous_answers.seek(0)
                             previous_answers.write("\n".join([x for x in old_split if x]))
-                            self.pull()
+                            self.pull(wait=False)
                         elif t.startswith("You don't seem to be solving the right level."):
                             print(prefix, t)
                         elif t.startswith("--- Day"):
